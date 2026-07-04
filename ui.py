@@ -16,6 +16,7 @@ st.set_page_config(
 )
 
 # Custom styling injection for clean hackathon look
+# Custom styling injection for clean hackathon look
 st.markdown("""
     <style>
     .reportview-container { background: #0e1117; }
@@ -23,8 +24,7 @@ st.markdown("""
     h2, h3 { color: #ffffff; }
     .stButton>button { background-color: #00ffcc; color: #0e1117; font-weight: bold; width: 100%; }
     </style>
-""", unsafe_with_html=True)
-
+""", unsafe_allow_html=True)  # Swapped to unsafe_allow_html
 st.title("⚡ OmniCoach: AI Biomechanical Suite")
 st.subheader("High-velocity multi-agent performance tracking & pro-level benchmarking")
 st.write("---")
