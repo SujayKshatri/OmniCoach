@@ -1,16 +1,1 @@
-{
-  "sports": {
-    "football": {
-      "archetypes": {
-        "cr7_freekick": {
-          "critical_timestamps": ["peak_backswing", "contact"],
-          "metrics": {
-            "knee_flexion_striking": { "target_deg": 115.0, "tolerance": 7.0 },
-            "hip_extension_supporting": { "target_deg": 165.0, "tolerance": 5.0 },
-            "torso_lean": { "target_deg": -15.0, "tolerance": 4.0 }
-          }
-        }
-      }
-    }
-  }
-}
+
