@@ -1,86 +1,220 @@
 #!/usr/bin/env python3
-"""
-OmniCoach Frontend Dashboard
-High-velocity Streamlit UI for video ingestion and interactive coaching visualization.
-"""
 
 import streamlit as st
 import requests
 
-# App Page Layout Design Configuration
+# -----------------------------
+# Page Config
+# -----------------------------
 st.set_page_config(
-    page_title="OmniCoach Panel",
+    page_title="OmniCoach",
     page_icon="⚡",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# Custom styling injection for clean hackathon look
-# Custom styling injection for clean hackathon look
+# -----------------------------
+# Custom CSS
+# -----------------------------
 st.markdown("""
-    <style>
-    .reportview-container { background: #0e1117; }
-    h1 { color: #00ffcc; font-weight: 800; }
-    h2, h3 { color: #ffffff; }
-    .stButton>button { background-color: #00ffcc; color: #0e1117; font-weight: bold; width: 100%; }
-    </style>
-""", unsafe_allow_html=True)  # Swapped to unsafe_allow_html
-st.title("⚡ OmniCoach: AI Biomechanical Suite")
-st.subheader("High-velocity multi-agent performance tracking & pro-level benchmarking")
-st.write("---")
+<style>
 
-# ── SIDEBAR SELECTION LAYER ──
-st.sidebar.header("📋 Session Parameters")
-sport_choice = st.sidebar.selectbox(
-    "Target Discipline:",
-    ["Football", "Basketball", "Tennis", "Cricket", "Athletics"]
+[data-testid="stAppViewContainer"]{
+    background:#0F172A;
+}
+
+section[data-testid="stSidebar"]{
+    background:#111827;
+}
+
+h1,h2,h3{
+    color:white;
+}
+
+.hero{
+    padding:25px;
+    border-radius:15px;
+    background:linear-gradient(90deg,#2563EB,#06B6D4);
+    color:white;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.metric{
+    background:#1E293B;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    color:white;
+}
+
+.stButton>button{
+    width:100%;
+    background:linear-gradient(90deg,#06B6D4,#2563EB);
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:17px;
+    font-weight:bold;
+    padding:10px;
+}
+
+.stButton>button:hover{
+    background:linear-gradient(90deg,#2563EB,#06B6D4);
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# Header
+# -----------------------------
+
+st.markdown("""
+<div class="hero">
+<h1>⚡ OmniCoach</h1>
+<h4>AI Biomechanical Performance Analysis</h4>
+</div>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# Sidebar
+# -----------------------------
+
+st.sidebar.title("⚙️ Settings")
+
+sport = st.sidebar.selectbox(
+    "Select Sport",
+    ["Football","Basketball","Tennis","Cricket","Athletics"]
 )
 
 uploaded_file = st.sidebar.file_uploader(
-    "Upload Training Clip (MP4/MOV):",
-    type=["mp4", "mov", "avi"]
+    "Upload Video",
+    type=["mp4","mov","avi"]
 )
 
-st.sidebar.write("---")
-st.sidebar.info("🤖 Powered by Google Antigravity Multi-Agent Framework & MediaPipe 3D Kinematics.")
+st.sidebar.markdown("---")
+st.sidebar.success("AI Ready")
 
-# ── MAIN PANEL INTERACTION LAYER ──
-col1, col2 = st.columns([1, 1])
+# -----------------------------
+# Metrics
+# -----------------------------
 
-with col1:
-    st.header("🎞️ Input Vector Source")
-    if uploaded_file is not None:
-        # Display the video immediately on the screen for the judges
+c1,c2,c3 = st.columns(3)
+
+with c1:
+    st.markdown("""
+    <div class="metric">
+    <h3>🤖 AI Agents</h3>
+    <h2>6</h2>
+    </div>
+    """,unsafe_allow_html=True)
+
+with c2:
+    st.markdown(f"""
+    <div class="metric">
+    <h3>🏅 Sport</h3>
+    <h2>{sport}</h2>
+    </div>
+    """,unsafe_allow_html=True)
+
+with c3:
+    st.markdown("""
+    <div class="metric">
+    <h3>📈 Status</h3>
+    <h2>Ready</h2>
+    </div>
+    """,unsafe_allow_html=True)
+
+st.write("")
+
+# -----------------------------
+# Main Layout
+# -----------------------------
+
+left,right = st.columns([1,1])
+
+# -----------------------------
+# Left Panel
+# -----------------------------
+
+with left:
+
+    st.subheader("🎥 Video Preview")
+
+    if uploaded_file:
+
         st.video(uploaded_file)
-        st.success(f"Stream loaded cleanly: {uploaded_file.name}")
-    else:
-        st.warning("Awaiting video ingestion from the sidebar configuration panel.")
 
-with col2:
-    st.header("📊 Generated Coaching CV")
-    
-    if uploaded_file is not None:
-        if st.sidebar.button("Run Multi-Agent Analysis Pipeline"):
-            with st.spinner(f"Processing 3D coordinate frames & calling multi-agent matrix..."):
-                try:
-                    # Prepare multipart form data payload for FastAPI
-                    files = {"video": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
-                    data = {"sport": sport_choice.lower()}
-                    
-                    # Target endpoint matching our main.py architecture
-                    backend_url = "http://localhost:8000/api/v1/analyze"
-                    response = requests.post(backend_url, files=files, data=data)
-                    
-                    if response.status_code == 200:
-                        payload = response.json()
-                        st.balloons()
-                        
-                        # Render the complete Markdown report returned from the agents
-                        st.markdown(payload["coaching_cv"])
-                    else:
-                        st.error(f"Backend Server Error ({response.status_code}): {response.text}")
-                        
-                except Exception as e:
-                    st.error(f"Failed to communicate with API service layer: {str(e)}")
+        st.success("Video Uploaded Successfully")
+
     else:
-        st.info("Upload a localized training session recording to trigger pipeline execution models.")
+
+        st.info("Upload a video from the sidebar.")
+
+# -----------------------------
+# Right Panel
+# -----------------------------
+
+with right:
+
+    st.subheader("📊 Coaching Report")
+
+    if uploaded_file:
+
+        if st.button("🚀 Analyze Performance"):
+
+            progress = st.progress(0)
+
+            for i in range(100):
+                progress.progress(i+1)
+
+            try:
+
+                files = {
+                    "video": (
+                        uploaded_file.name,
+                        uploaded_file.getvalue(),
+                        uploaded_file.type
+                    )
+                }
+
+                data = {
+                    "sport": sport.lower()
+                }
+
+                response = requests.post(
+                    "http://localhost:8000/api/v1/analyze",
+                    files=files,
+                    data=data
+                )
+
+                if response.status_code == 200:
+
+                    result = response.json()
+
+                    st.success("Analysis Complete ✅")
+
+                    st.balloons()
+
+                    with st.expander("📄 Coaching CV", expanded=True):
+                        st.markdown(result["coaching_cv"])
+
+                else:
+
+                    st.error(response.text)
+
+            except Exception as e:
+
+                st.error(e)
+
+    else:
+
+        st.info("Waiting for video...")
+
+# -----------------------------
+# Footer
+# -----------------------------
+
+st.write("---")
+
+st.caption("⚡ OmniCoach • Powered by Google AI + MediaPipe + Streamlit")
