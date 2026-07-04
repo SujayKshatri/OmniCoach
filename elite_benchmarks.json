@@ -1,0 +1,261 @@
+{
+  "metadata": {
+    "description": "Multi-sport elite athlete biomechanical benchmarks (synthetic)",
+    "source": "Mock data for MVP development — expandable per sport",
+    "units": {
+      "angles": "degrees",
+      "speed": "m/s",
+      "acceleration": "m/s²",
+      "rotation": "deg/s"
+    }
+  },
+  "sports": {
+    "football": {
+      "athletes": {
+        "messi": {
+          "name": "Lionel Messi",
+          "position": "Forward / Attacking Midfielder",
+          "sprint": {
+            "knee_flexion_max": 142,
+            "knee_extension_min": 12,
+            "hip_flexion_max": 68,
+            "hip_extension_max": -22,
+            "ankle_dorsiflexion": 28,
+            "cadence_steps_per_sec": 4.8,
+            "stride_length_m": 1.85,
+            "top_speed_kmh": 32.5
+          },
+          "agility": {
+            "knee_flexion_avg": 95,
+            "hip_flexion_avg": 42,
+            "center_of_gravity_drop_cm": 8.2,
+            "lateral_acceleration": 4.1,
+            "body_lean_angle": 18
+          },
+          "striking": {
+            "knee_flexion_at_contact": 85,
+            "hip_rotation_speed": 720,
+            "ankle_plantarflexion": 45,
+            "trunk_lean_at_contact": 12,
+            "follow_through_angle": 155
+          }
+        },
+        "ronaldo": {
+          "name": "Cristiano Ronaldo",
+          "position": "Forward / Winger",
+          "sprint": {
+            "knee_flexion_max": 148,
+            "knee_extension_min": 10,
+            "hip_flexion_max": 72,
+            "hip_extension_max": -25,
+            "ankle_dorsiflexion": 30,
+            "cadence_steps_per_sec": 4.6,
+            "stride_length_m": 2.15,
+            "top_speed_kmh": 33.9
+          },
+          "agility": {
+            "knee_flexion_avg": 100,
+            "hip_flexion_avg": 45,
+            "center_of_gravity_drop_cm": 6.5,
+            "lateral_acceleration": 3.8,
+            "body_lean_angle": 15
+          },
+          "striking": {
+            "knee_flexion_at_contact": 90,
+            "hip_rotation_speed": 810,
+            "ankle_plantarflexion": 50,
+            "trunk_lean_at_contact": 15,
+            "follow_through_angle": 165
+          }
+        }
+      }
+    },
+    "basketball": {
+      "athletes": {
+        "lebron": {
+          "name": "LeBron James",
+          "position": "Forward",
+          "sprint": {
+            "knee_flexion_max": 145,
+            "hip_flexion_max": 70,
+            "hip_extension_max": -24,
+            "stride_length_m": 2.35,
+            "top_speed_kmh": 32.2
+          },
+          "jumping": {
+            "knee_flexion_at_takeoff": 95,
+            "hip_flexion_at_takeoff": 55,
+            "ankle_plantarflexion_at_takeoff": 52,
+            "vertical_leap_cm": 112,
+            "shoulder_elevation_at_peak": 178
+          },
+          "shooting": {
+            "elbow_angle_at_release": 165,
+            "shoulder_flexion_at_release": 155,
+            "wrist_flexion_at_follow_through": 85,
+            "knee_flexion_at_set": 110
+          }
+        },
+        "curry": {
+          "name": "Stephen Curry",
+          "position": "Guard",
+          "sprint": {
+            "knee_flexion_max": 140,
+            "hip_flexion_max": 65,
+            "hip_extension_max": -20,
+            "stride_length_m": 1.95,
+            "top_speed_kmh": 30.1
+          },
+          "jumping": {
+            "knee_flexion_at_takeoff": 100,
+            "hip_flexion_at_takeoff": 50,
+            "ankle_plantarflexion_at_takeoff": 48,
+            "vertical_leap_cm": 91,
+            "shoulder_elevation_at_peak": 175
+          },
+          "shooting": {
+            "elbow_angle_at_release": 170,
+            "shoulder_flexion_at_release": 160,
+            "wrist_flexion_at_follow_through": 90,
+            "knee_flexion_at_set": 115
+          }
+        }
+      }
+    },
+    "tennis": {
+      "athletes": {
+        "djokovic": {
+          "name": "Novak Djokovic",
+          "position": "All-Court",
+          "serve": {
+            "shoulder_abduction_at_trophy": 170,
+            "shoulder_rotation_speed": 1200,
+            "elbow_extension_at_contact": 168,
+            "knee_flexion_at_load": 115,
+            "trunk_rotation_speed": 650,
+            "wrist_pronation_speed": 980
+          },
+          "groundstroke": {
+            "hip_rotation_speed": 580,
+            "shoulder_rotation_speed": 920,
+            "knee_flexion_avg": 105,
+            "trunk_lean_at_contact": 8,
+            "elbow_flexion_at_contact": 95
+          },
+          "agility": {
+            "lateral_acceleration": 4.5,
+            "knee_flexion_at_split_step": 110,
+            "hip_abduction_max": 55,
+            "ankle_dorsiflexion_at_push_off": 32
+          }
+        },
+        "nadal": {
+          "name": "Rafael Nadal",
+          "position": "Baseline / Clay-Court",
+          "serve": {
+            "shoulder_abduction_at_trophy": 165,
+            "shoulder_rotation_speed": 1150,
+            "elbow_extension_at_contact": 165,
+            "knee_flexion_at_load": 120,
+            "trunk_rotation_speed": 680,
+            "wrist_pronation_speed": 950
+          },
+          "groundstroke": {
+            "hip_rotation_speed": 620,
+            "shoulder_rotation_speed": 980,
+            "knee_flexion_avg": 115,
+            "trunk_lean_at_contact": 10,
+            "elbow_flexion_at_contact": 100
+          },
+          "agility": {
+            "lateral_acceleration": 4.3,
+            "knee_flexion_at_split_step": 115,
+            "hip_abduction_max": 52,
+            "ankle_dorsiflexion_at_push_off": 30
+          }
+        }
+      }
+    },
+    "cricket": {
+      "athletes": {
+        "kohli": {
+          "name": "Virat Kohli",
+          "position": "Batsman",
+          "batting": {
+            "knee_flexion_at_stance": 125,
+            "hip_rotation_speed": 520,
+            "shoulder_rotation_speed": 680,
+            "elbow_extension_at_contact": 155,
+            "front_foot_stride_length_m": 0.95,
+            "head_position_stability_score": 92
+          },
+          "running_between_wickets": {
+            "knee_flexion_max": 140,
+            "hip_extension_max": -22,
+            "turn_deceleration_rate": 5.2,
+            "top_speed_kmh": 30.5
+          }
+        },
+        "bumrah": {
+          "name": "Jasprit Bumrah",
+          "position": "Fast Bowler",
+          "bowling": {
+            "shoulder_rotation_speed": 1350,
+            "elbow_extension_at_release": 172,
+            "hip_rotation_speed": 720,
+            "front_knee_flexion_at_delivery": 145,
+            "trunk_lateral_flexion": 35,
+            "release_height_m": 2.45
+          },
+          "sprint_approach": {
+            "knee_flexion_max": 142,
+            "hip_flexion_max": 68,
+            "approach_speed_kmh": 28.5,
+            "stride_length_m": 2.05
+          }
+        }
+      }
+    },
+    "athletics": {
+      "athletes": {
+        "bolt": {
+          "name": "Usain Bolt",
+          "position": "Sprinter (100m/200m)",
+          "sprint": {
+            "knee_flexion_max": 155,
+            "knee_extension_min": 8,
+            "hip_flexion_max": 80,
+            "hip_extension_max": -30,
+            "ankle_dorsiflexion": 32,
+            "cadence_steps_per_sec": 4.28,
+            "stride_length_m": 2.44,
+            "top_speed_kmh": 44.72
+          },
+          "block_start": {
+            "knee_flexion_at_set": 90,
+            "hip_flexion_at_set": 40,
+            "reaction_time_ms": 155,
+            "first_step_power_kw": 3.8
+          }
+        },
+        "duplantis": {
+          "name": "Mondo Duplantis",
+          "position": "Pole Vaulter",
+          "approach": {
+            "knee_flexion_max": 148,
+            "hip_flexion_max": 72,
+            "top_speed_kmh": 36.5,
+            "stride_length_m": 2.25
+          },
+          "takeoff": {
+            "knee_extension_at_plant": 170,
+            "hip_flexion_at_takeoff": 45,
+            "shoulder_elevation": 178,
+            "ankle_plantarflexion": 55,
+            "vertical_velocity_ms": 5.2
+          }
+        }
+      }
+    }
+  }
+}
