@@ -66,6 +66,13 @@ def _audit(agent_name: str, action: str) -> None:
 #      agentic loop — tool calls, generations, session start/end, etc.
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Change your imports or add Any at the top of app.py if not present
+from typing import Any
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  1.  ANTIGRAVITY INSPECT LIFECYCLE HOOKS (PATCHED FOR HACKATHON COMPATIBILITY)
+# ─────────────────────────────────────────────────────────────────────────────
+
 @hooks.on_session_start
 async def _on_session_start() -> None:
     """Fires when the agent session begins."""
@@ -79,39 +86,39 @@ async def _on_session_end() -> None:
 
 
 @hooks.pre_turn
-async def _on_pre_turn(data: types.TurnStart) -> None:
+async def _on_pre_turn(data: Any) -> None:  # Placed Any here to bypass version mismatches
     """Fires at the start of each conversational turn (before the LLM runs)."""
-    _audit("COORDINATOR", f"PRE_TURN — New turn starting")
+    _audit("COORDINATOR", "PRE_TURN — New turn starting")
 
 
 @hooks.post_turn
-async def _on_post_turn(data: types.TurnEnd) -> None:
+async def _on_post_turn(data: Any) -> None:  # Placed Any here
     """Fires at the end of each conversational turn (after the LLM responds)."""
-    _audit("COORDINATOR", f"POST_TURN — Turn completed")
+    _audit("COORDINATOR", "POST_TURN — Turn completed")
 
 
 @hooks.pre_tool_call_decide
-async def _on_pre_tool_call(data: types.ToolCall) -> types.HookResult:
-    """Fires BEFORE every tool call.  Logs the tool name + arguments.
+async def _on_pre_tool_call(data: Any) -> types.HookResult:  # Placed Any here
+    """Fires BEFORE every tool call. Logs the tool name + arguments."""
+    # Fallback attribute checking safely using getattr or dict lookups
+    tool_name = getattr(data, "name", "unknown_tool")
+    tool_args = getattr(data, "args", {})
 
-    This is a 'decide' hook — it returns HookResult(allow=True) to permit
-    every call.  Switching to allow=False would block the tool.
-    """
-    # Detect sub-agent spawning vs regular tools
-    if data.name == types.BuiltinTools.START_SUBAGENT.value:
-        subagent_name = data.args.get("subject", "unknown-subagent")
+    if tool_name == "START_SUBAGENT" or "subagent" in str(tool_name):
+        subagent_name = tool_args.get("subject", "unknown-subagent")
         _audit("COORDINATOR", f"PRE_TOOL — Delegating to sub-agent: {subagent_name}")
     else:
-        _audit("AGENT", f"PRE_TOOL — Calling '{data.name}' | args={data.args}")
+        _audit("AGENT", f"PRE_TOOL — Calling '{tool_name}' | args={tool_args}")
     return types.HookResult(allow=True)
 
 
 @hooks.post_tool_call
-async def _on_post_tool_call(data: types.ToolResult) -> None:
-    """Fires AFTER every tool call.  Logs the tool name + result summary."""
-    result_preview = str(data.result)[:200] if data.result else "(no result)"
-    _audit("AGENT", f"POST_TOOL — '{data.name}' returned: {result_preview}")
-
+async def _on_post_tool_call(data: Any) -> None:  # Placed Any here
+    """Fires AFTER every tool call. Logs the tool name + result summary."""
+    tool_name = getattr(data, "name", "unknown_tool")
+    tool_result = getattr(data, "result", "(no result)")
+    result_preview = str(tool_result)[:200]
+    _audit("AGENT", f"POST_TOOL — '{tool_name}' returned: {result_preview}")
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  2.  MOCK MEDIAPIPE TELEMETRY TOOL
