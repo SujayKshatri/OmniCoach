@@ -1,220 +1,98 @@
 #!/usr/bin/env python3
+"""
+OmniCoach Frontend Dashboard - Stable Hackathon Edition
+High-velocity Streamlit UI with robust mock/live pipeline switching toggles.
+"""
 
 import streamlit as st
 import requests
 
-# -----------------------------
-# Page Config
-# -----------------------------
+# App Page Layout Design Configuration
 st.set_page_config(
-    page_title="OmniCoach",
+    page_title="OmniCoach Panel",
     page_icon="⚡",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# -----------------------------
-# Custom CSS
-# -----------------------------
+# Custom styling injection for clean hackathon look
 st.markdown("""
-<style>
-
-[data-testid="stAppViewContainer"]{
-    background:#0F172A;
-}
-
-section[data-testid="stSidebar"]{
-    background:#111827;
-}
-
-h1,h2,h3{
-    color:white;
-}
-
-.hero{
-    padding:25px;
-    border-radius:15px;
-    background:linear-gradient(90deg,#2563EB,#06B6D4);
-    color:white;
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.metric{
-    background:#1E293B;
-    padding:18px;
-    border-radius:12px;
-    text-align:center;
-    color:white;
-}
-
-.stButton>button{
-    width:100%;
-    background:linear-gradient(90deg,#06B6D4,#2563EB);
-    color:white;
-    border:none;
-    border-radius:10px;
-    font-size:17px;
-    font-weight:bold;
-    padding:10px;
-}
-
-.stButton>button:hover{
-    background:linear-gradient(90deg,#2563EB,#06B6D4);
-}
-
-</style>
+    <style>
+    .reportview-container { background: #0e1117; }
+    h1 { color: #00ffcc; font-weight: 800; }
+    h2, h3 { color: #ffffff; }
+    .stButton>button { background-color: #00ffcc; color: #0e1117; font-weight: bold; width: 100%; }
+    </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# Header
-# -----------------------------
-
-st.markdown("""
-<div class="hero">
-<h1>⚡ OmniCoach</h1>
-<h4>AI Biomechanical Performance Analysis</h4>
-</div>
-""", unsafe_allow_html=True)
-
-# -----------------------------
-# Sidebar
-# -----------------------------
-
-st.sidebar.title("⚙️ Settings")
-
-sport = st.sidebar.selectbox(
-    "Select Sport",
-    ["Football","Basketball","Tennis","Cricket","Athletics"]
-)
-
-uploaded_file = st.sidebar.file_uploader(
-    "Upload Video",
-    type=["mp4","mov","avi"]
-)
-
-st.sidebar.markdown("---")
-st.sidebar.success("AI Ready")
-
-# -----------------------------
-# Metrics
-# -----------------------------
-
-c1,c2,c3 = st.columns(3)
-
-with c1:
-    st.markdown("""
-    <div class="metric">
-    <h3>🤖 AI Agents</h3>
-    <h2>6</h2>
-    </div>
-    """,unsafe_allow_html=True)
-
-with c2:
-    st.markdown(f"""
-    <div class="metric">
-    <h3>🏅 Sport</h3>
-    <h2>{sport}</h2>
-    </div>
-    """,unsafe_allow_html=True)
-
-with c3:
-    st.markdown("""
-    <div class="metric">
-    <h3>📈 Status</h3>
-    <h2>Ready</h2>
-    </div>
-    """,unsafe_allow_html=True)
-
-st.write("")
-
-# -----------------------------
-# Main Layout
-# -----------------------------
-
-left,right = st.columns([1,1])
-
-# -----------------------------
-# Left Panel
-# -----------------------------
-
-with left:
-
-    st.subheader("🎥 Video Preview")
-
-    if uploaded_file:
-
-        st.video(uploaded_file)
-
-        st.success("Video Uploaded Successfully")
-
-    else:
-
-        st.info("Upload a video from the sidebar.")
-
-# -----------------------------
-# Right Panel
-# -----------------------------
-
-with right:
-
-    st.subheader("📊 Coaching Report")
-
-    if uploaded_file:
-
-        if st.button("🚀 Analyze Performance"):
-
-            progress = st.progress(0)
-
-            for i in range(100):
-                progress.progress(i+1)
-
-            try:
-
-                files = {
-                    "video": (
-                        uploaded_file.name,
-                        uploaded_file.getvalue(),
-                        uploaded_file.type
-                    )
-                }
-
-                data = {
-                    "sport": sport.lower()
-                }
-
-                response = requests.post(
-                    "http://localhost:8000/api/v1/analyze",
-                    files=files,
-                    data=data
-                )
-
-                if response.status_code == 200:
-
-                    result = response.json()
-
-                    st.success("Analysis Complete ✅")
-
-                    st.balloons()
-
-                    with st.expander("📄 Coaching CV", expanded=True):
-                        st.markdown(result["coaching_cv"])
-
-                else:
-
-                    st.error(response.text)
-
-            except Exception as e:
-
-                st.error(e)
-
-    else:
-
-        st.info("Waiting for video...")
-
-# -----------------------------
-# Footer
-# -----------------------------
-
+st.title("⚡ OmniCoach: AI Biomechanical Suite")
+st.subheader("High-velocity multi-agent performance tracking & pro-level benchmarking")
 st.write("---")
 
-st.caption("⚡ OmniCoach • Powered by Google AI + MediaPipe + Streamlit")
+# ── SIDEBAR SELECTION LAYER ──
+st.sidebar.header("📋 Session Parameters")
+sport_choice = st.sidebar.selectbox(
+    "Target Discipline:",
+    ["Football", "Basketball", "Tennis", "Cricket", "Athletics"]
+)
+
+# Live Demonstration vs Sandbox Mock Toggle
+demo_mode = st.sidebar.checkbox("Use Demo / Sandbox Mode", value=False, help="Enable this to test using integrated mock video payloads without transferring massive files over Wi-Fi.")
+
+uploaded_file = None
+if not demo_mode:
+    uploaded_file = st.sidebar.file_uploader(
+        "Upload Training Clip (MP4/MOV):",
+        type=["mp4", "mov", "avi"]
+    )
+else:
+    st.sidebar.success("Sandbox Mode Active: System will pipeline deterministic tracking configurations.")
+
+st.sidebar.write("---")
+st.sidebar.info("🤖 Powered by Google Antigravity Multi-Agent Framework & MediaPipe 3D Kinematics.")
+
+# ── MAIN PANEL INTERACTION LAYER ──
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    st.header("🎞️ Input Vector Source")
+    if demo_mode:
+        st.info(f"Using mock vector asset: `mock://training_session_2026-07-04.mp4` ({sport_choice})")
+        st.write("The multi-agent pipeline will evaluate pre-loaded skeleton telemetry strings to mimic video inferences.")
+    elif uploaded_file is not None:
+        st.video(uploaded_file)
+        st.success(f"Stream loaded cleanly: {uploaded_file.name}")
+    else:
+        st.warning("Awaiting video ingestion or sandbox deployment toggle selection.")
+
+with col2:
+    st.header("📊 Generated Coaching CV")
+    
+    # Validation constraint check to confirm we have an active payload pipeline
+    if demo_mode or (uploaded_file is not None):
+        if st.sidebar.button("Run Multi-Agent Analysis Pipeline"):
+            with st.spinner(f"Processing 3D coordinate frames & calling multi-agent matrix..."):
+                try:
+                    backend_url = "http://localhost:8000/api/v1/analyze"
+                    
+                    if demo_mode:
+                        # Construct a mock multipart profile stream to keep the schema happy
+                        files = {"video": ("mock_session.mp4", b"fake_bytes", "video/mp4")}
+                        data = {"sport": sport_choice.lower()}
+                    else:
+                        files = {"video": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
+                        data = {"sport": sport_choice.lower()}
+                    
+                    response = requests.post(backend_url, files=files, data=data)
+                    
+                    if response.status_code == 200:
+                        payload = response.json()
+                        st.balloons()
+                        st.markdown(payload["coaching_cv"])
+                    else:
+                        st.error(f"Backend Server Error ({response.status_code}): {response.text}")
+                        
+                except Exception as e:
+                    st.error(f"Failed to communicate with API service layer: {str(e)}")
+    else:
+        st.info("Upload a localized training session recording to trigger pipeline execution models.")
