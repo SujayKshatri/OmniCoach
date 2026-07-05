@@ -201,7 +201,20 @@ def process_video_telemetry(video_path: str) -> str:
                 "event": "power_phase_windup",
                 "right_hip_flexion": int(np.max(metrics_history["right_hip"])) if metrics_history["right_hip"] else 0
             }
-        ]
+        ],
+        "timeline": {
+            "timestamps": [float(t) for t in timestamps],
+            "left_knee": [float(v) for v in metrics_history["left_knee"]],
+            "right_knee": [float(v) for v in metrics_history["right_knee"]],
+            "left_hip": [float(v) for v in metrics_history["left_hip"]],
+            "right_hip": [float(v) for v in metrics_history["right_hip"]],
+            "left_shoulder": [float(v) for v in metrics_history["left_shoulder"]],
+            "right_shoulder": [float(v) for v in metrics_history["right_shoulder"]],
+            "left_elbow": [float(v) for v in metrics_history["left_elbow"]],
+            "right_elbow": [float(v) for v in metrics_history["right_elbow"]],
+            "left_ankle": [float(v) for v in metrics_history["left_ankle"]],
+            "right_ankle": [float(v) for v in metrics_history["right_ankle"]]
+        }
     }
     
     return json.dumps(telemetry_payload, indent=2)
