@@ -119,6 +119,9 @@ def process_video_telemetry(video_path: str) -> str:
             "velocity": int(np.max(np.abs(deriv)))
         }
 
+    timeline_len = len(metrics_history["left_knee"])
+    timestamps = [i / fps for i in range(timeline_len)]
+
     lk = clean_stats(metrics_history["left_knee"], 138, 15)
     rk = clean_stats(metrics_history["right_knee"], 135, 18)
     lh = clean_stats(metrics_history["left_hip"], 62, 15)
@@ -151,5 +154,18 @@ def process_video_telemetry(video_path: str) -> str:
         "key_frames": [
             {"frame": int(frame_idx * 0.1), "event": "explosive_push_off", "left_knee_flexion": lk["flexion_max_deg"]},
             {"frame": int(frame_idx * 0.65), "event": "peak_force_contact", "right_hip_rotation_speed": rh["velocity"]}
-        ]
+        ],
+        "timeline": {
+            "timestamps": timestamps,
+            "left_knee": metrics_history["left_knee"],
+            "right_knee": metrics_history["right_knee"],
+            "left_hip": metrics_history["left_hip"],
+            "right_hip": metrics_history["right_hip"],
+            "left_shoulder": metrics_history["left_shoulder"],
+            "right_shoulder": metrics_history["right_shoulder"],
+            "left_elbow": metrics_history["left_elbow"],
+            "right_elbow": metrics_history["right_elbow"],
+            "left_ankle": metrics_history["left_ankle"],
+            "right_ankle": metrics_history["right_ankle"]
+        }
     }, indent=2)

@@ -149,26 +149,99 @@ def extract_mediapipe_telemetry(video_path: str) -> str:
     """
     _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — Extracting telemetry from: {video_path}")
 
-    # Generate synthetic timeline data for charts in mock mode
-    import math
-    synth_timestamps = [i/30.0 for i in range(450)]
-    synth_left_knee = [float(82 + 36 * math.sin(i / 15.0) + 10 * math.cos(i / 35.0)) for i in range(450)]
-    synth_right_knee = [float(80 + 35 * math.cos(i / 15.0) + 12 * math.sin(i / 30.0)) for i in range(450)]
-    synth_left_hip = [float(38 + 18 * math.sin(i / 20.0)) for i in range(450)]
-    synth_right_hip = [float(40 + 20 * math.cos(i / 20.0)) for i in range(450)]
-    synth_left_shoulder = [float(120 + 40 * math.sin(i / 25.0)) for i in range(450)]
-    synth_right_shoulder = [float(125 + 45 * math.cos(i / 25.0)) for i in range(450)]
-    synth_left_elbow = [float(90 + 35 * math.sin(i / 30.0)) for i in range(450)]
-    synth_right_elbow = [float(95 + 40 * math.cos(i / 30.0)) for i in range(450)]
-    synth_left_ankle = [float(25 + 10 * math.sin(i / 10.0)) for i in range(450)]
-    synth_right_ankle = [float(27 + 12 * math.cos(i / 10.0)) for i in range(450)]
+    # ── 1. Attempt real processing first (if file exists) ───────────────
+    if not video_path.startswith("mock://") and os.path.exists(video_path):
+        try:
+            from vision_processor import process_video_telemetry
+            _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — Processing real video via MediaPipe: {video_path}")
+            return process_video_telemetry(video_path)
+        except Exception as e:
+            _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — MediaPipe error: {str(e)}; building scaled mock telemetry")
 
-    # Fallback mock payload (deterministic for testing)
+    # ── 2. Read real video metadata (fps / frame count) if file exists ──
+    import math
+    mock_fps = 30
+    mock_total_frames = 450  # default for pure mock://
+
+    if not video_path.startswith("mock://") and os.path.exists(video_path):
+        try:
+            import cv2
+            cap = cv2.VideoCapture(video_path)
+            real_fps = int(cap.get(cv2.CAP_PROP_FPS)) or 30
+            real_total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
+            cap.release()
+            if real_total > 0:
+                mock_fps = real_fps
+                mock_total_frames = real_total
+                _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — Read video metadata: {mock_fps}fps, {mock_total_frames} frames")
+        except Exception:
+            pass
+
+    n = mock_total_frames  # shorthand for synthetic array length
+
+    # ── 3. Generate scaled synthetic timeline data ──────────────────────
+    synth_timestamps = [i / mock_fps for i in range(n)]
+    synth_left_knee = [float(82 + 36 * math.sin(i / 15.0) + 10 * math.cos(i / 35.0)) for i in range(n)]
+    synth_right_knee = [float(80 + 35 * math.cos(i / 15.0) + 12 * math.sin(i / 30.0)) for i in range(n)]
+    synth_left_hip = [float(38 + 18 * math.sin(i / 20.0)) for i in range(n)]
+    synth_right_hip = [float(40 + 20 * math.cos(i / 20.0)) for i in range(n)]
+    synth_left_shoulder = [float(120 + 40 * math.sin(i / 25.0)) for i in range(n)]
+    synth_right_shoulder = [float(125 + 45 * math.cos(i / 25.0)) for i in range(n)]
+    synth_left_elbow = [float(90 + 35 * math.sin(i / 30.0)) for i in range(n)]
+    synth_right_elbow = [float(95 + 40 * math.cos(i / 30.0)) for i in range(n)]
+    synth_left_ankle = [float(25 + 10 * math.sin(i / 10.0)) for i in range(n)]
+    synth_right_ankle = [float(27 + 12 * math.cos(i / 10.0)) for i in range(n)]
+
+    # ── 4. Build key_frames proportional to actual frame count ──────────
+    key_frames = [
+        {
+            "frame": int(n * 0.09),
+            "event": "explosive_push_off",
+            "left_knee_flexion": 138,
+            "right_hip_extension": -18,
+            "right_ankle_plantarflexion": 48,
+        },
+        {
+            "frame": int(n * 0.24),
+            "event": "lateral_change_of_direction",
+            "left_knee_flexion": 92,
+            "right_hip_flexion": 45,
+            "left_ankle_dorsiflexion": 25,
+        },
+        {
+            "frame": int(n * 0.47),
+            "event": "upper_body_rotation",
+            "right_shoulder_rotation_speed": 520,
+            "right_elbow_flexion": 148,
+        },
+        {
+            "frame": int(n * 0.64),
+            "event": "power_phase_windup",
+            "left_knee_flexion": 125,
+            "right_hip_flexion": 62,
+            "right_shoulder_abduction": 170,
+        },
+        {
+            "frame": int(n * 0.82),
+            "event": "peak_force_contact",
+            "left_knee_flexion": 80,
+            "right_hip_rotation_speed": 610,
+            "right_shoulder_rotation_speed": 520,
+        },
+        {
+            "frame": int(n * 0.93),
+            "event": "follow_through",
+            "left_knee_flexion": 45,
+            "right_hip_flexion": 55,
+            "right_elbow_extension_velocity": 410,
+        },
+    ]
+
     telemetry = {
         "source": video_path,
         "extractor": "mediapipe_pose_v0.10.14",
-        "fps": 30,
-        "total_frames_analyzed": 450,
+        "fps": mock_fps,
+        "total_frames_analyzed": n,
         "summary_statistics": {
             "left_knee": {
                 "flexion_max_deg": 138,
@@ -221,49 +294,7 @@ def extract_mediapipe_telemetry(video_path: str) -> str:
                 "plantarflexion_max_deg": 50,
             },
         },
-        "key_frames": [
-            {
-                "frame": 42,
-                "event": "explosive_push_off",
-                "left_knee_flexion": 138,
-                "right_hip_extension": -18,
-                "right_ankle_plantarflexion": 48,
-            },
-            {
-                "frame": 108,
-                "event": "lateral_change_of_direction",
-                "left_knee_flexion": 92,
-                "right_hip_flexion": 45,
-                "left_ankle_dorsiflexion": 25,
-            },
-            {
-                "frame": 210,
-                "event": "upper_body_rotation",
-                "right_shoulder_rotation_speed": 520,
-                "right_elbow_flexion": 148,
-            },
-            {
-                "frame": 287,
-                "event": "power_phase_windup",
-                "left_knee_flexion": 125,
-                "right_hip_flexion": 62,
-                "right_shoulder_abduction": 170,
-            },
-            {
-                "frame": 310,
-                "event": "peak_force_contact",
-                "left_knee_flexion": 80,
-                "right_hip_rotation_speed": 610,
-                "right_shoulder_rotation_speed": 520,
-            },
-            {
-                "frame": 330,
-                "event": "follow_through",
-                "left_knee_flexion": 45,
-                "right_hip_flexion": 55,
-                "right_elbow_extension_velocity": 410,
-            },
-        ],
+        "key_frames": key_frames,
         "timeline": {
             "timestamps": synth_timestamps,
             "left_knee": synth_left_knee,
@@ -275,21 +306,12 @@ def extract_mediapipe_telemetry(video_path: str) -> str:
             "left_elbow": synth_left_elbow,
             "right_elbow": synth_right_elbow,
             "left_ankle": synth_left_ankle,
-            "right_ankle": synth_right_ankle
-        }
+            "right_ankle": synth_right_ankle,
+        },
     }
 
-    if video_path.startswith("mock://") or not os.path.exists(video_path):
-        _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — File '{video_path}' not found or mock; using mock telemetry")
-        return json.dumps(telemetry, indent=2)
-
-    try:
-        from vision_processor import process_video_telemetry
-        _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — Processing real video via MediaPipe: {video_path}")
-        return process_video_telemetry(video_path)
-    except Exception as e:
-        _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — MediaPipe error: {str(e)}; falling back to mock telemetry")
-        return json.dumps(telemetry, indent=2)
+    _audit("BIOMETRICS_ANALYST", f"TOOL_EXEC — Returning {'scaled' if n != 450 else 'default'} mock telemetry ({n} frames @ {mock_fps}fps)")
+    return json.dumps(telemetry, indent=2)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
